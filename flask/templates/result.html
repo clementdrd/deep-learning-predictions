@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>First Flask App</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <style>
+  .box
+  {
+   max-width:600px;
+   width:100%;
+   margin: 0 auto;;
+  }
+  #purcentage_scss{
+    font-size: x-large;
+    color: green;
+    font-weight: bold;
+    text-align: center;
+  }
+/*
+  th, td {
+    padding: 5px;
+    text-align: left;    
+  }
+
+  table, th, td {
+    border: 1px solid rgb(28, 116, 187);
+    border-collapse: collapse;
+  }
+  */
+  </style>
+
+</head>
+
+<script type="text/javascript"charset="utf-8">
+
+    var dataset_name = location.href.split('=')[1];
+
+    $(document).ready(function () {
+        $('#dtMaterialDesignExample').DataTable();
+        $('#dtMaterialDesignExample_wrapper').find('label').each(function () {
+          $(this).parent().append($(this).children());
+        });
+        $('#dtMaterialDesignExample_wrapper .dataTables_filter').find('input').each(function () {
+          const $this = $(this);
+          $this.attr("placeholder", "Search");
+          $this.removeClass('form-control-sm');
+        });
+        /*
+        $('#dtMaterialDesignExample_wrapper .dataTables_length').addClass('d-flex flex-row');
+        $('#dtMaterialDesignExample_wrapper .dataTables_filter').addClass('md-form');
+        $('#dtMaterialDesignExample_wrapper select').removeClass('custom-select custom-select-sm form-control form-control-sm');
+        $('#dtMaterialDesignExample_wrapper select').addClass('mdb-select');
+        $('#dtMaterialDesignExample_wrapper .mdb-select').materialSelect();
+        $('#dtMaterialDesignExample_wrapper .dataTables_filter').find('label').remove();
+        */
+      });
+
+
+function launch_script(){
+
+    var TDs = document.querySelectorAll(".table td");
+    var unit = document.getElementById("tab_result").innerHTML;
+    var parts = unit.split("', '");
+    var results = new Array([]);
+    var errors = 0;
+
+    for (var i = 0; i < parts.length; i++) {
+    
+        var value = parts[i].split("||")
+        var a = value[0].split(':')[1]
+        var b = value[1].split(' ')[4]
+        var c = value[2].split("set ")[1].toString().split(')')[0]
+
+        value = {a, b, c}
+        results[i] = value;
+    }
+
+    var n_results = results.reverse()
+
+    var d1 = document.getElementById('dtMaterialDesignExample');
+
+    for(var a = 0; a != results.length; a++) {
+        d1.insertAdjacentHTML('afterbegin', '<tr><th>'+ n_results[a].a +'&#160;&#160;</th><th id="prediction">'+ n_results[a].b +'</th><th>'+ n_results[a].c +'</th></tr>');
+    }
+
+    for (var i = 0; i < parts.length; i++) {
+        var value = parts[i].split("||")
+        var b = value[1].split(' ')[4]
+        var c = value[2].split("set ")[1].toString().split(')')[0]
+
+        if(b != c) {
+            console.log('error')
+            errors ++;
+            document.getElementById('prediction').style.color = "red";
+        }
+    }
+
+    console.log('errors ==' + errors)
+    
+    success_average = 100 - ((errors * 100) / parts.length)
+
+    console.log('purcentage of success =' + success_average)
+
+    document.getElementById('purcentage_scss').innerHTML = Math.round(success_average) + '% of success'
+
+    //console.log(results[0])
+    //document.getElementById("tab_result").innerHTML = unit;
+}
+
+</script>
+
+<body onload="launch_script()">
+
+    <p id="purcentage_scss" class="purcentage_win"><br><br>
+        </p>
+
+        <table id="dtMaterialDesignExample" class="table" cellspacing="0" style="width:100%">
+            <thead>
+                <tr>
+                    <th class="th-sm">Datas</th>
+                    <th class="th-sm">Prediction</th>
+                    <th class="th-sm">Expected</th>
+                </tr>
+            </thead>
+        </table>
+
+        <h3 id="tab_result" style="display:none" >{{ value }}<h3></h3>
+       </div>
+      </div>
+</body>
+</html>

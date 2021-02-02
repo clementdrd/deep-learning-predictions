@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>First Flask App</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>  
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="../static/js/FileSaver.js"></script>
+</head>
+
+<script type="text/javascript"charset="utf-8">
+
+
+  var dataset_name = location.href.split('=')[1];
+
+  $(document).ready(function () {
+    $('#dtMaterialDesignExample').DataTable();
+    //$('table').dataTable({searching: false, paging: false, info: false});
+  });
+
+  function delete_line(){
+
+    console.log('Welcome to delete line')
+    document.getElementById('dtMaterialDesignExample').deleteRow(-1);
+
+  }
+
+  function save_file(){
+    console.log("welcome to save file")
+    var content = document.getElementById('dtMaterialDesignExample').innerHTML
+
+    parsed_content = content.split("</tr></tbody><tbody>").join('|\n').split('</th>').join(',').split('<th>').join('').split('<tr>').join('').split('<tbody><tr role="row" class="odd"><th class="sorting_1">').join('').split(',</tr></tbody>')[0].split(',|').join('')
+
+    console.log(parsed_content)
+
+    var blob = new Blob([parsed_content], { type: "text/plain;charset=utf-8" });
+            saveAs(blob, "new_" + dataset_name);
+
+  }
+
+  function save_line(){
+    console.log("welcome to save line")
+
+    var d1 = document.getElementById('dtMaterialDesignExample');
+
+    if(document.getElementById('input1').value == "" || document.getElementById('input2').value == "" || document.getElementById('input3').value == "" || document.getElementById('input4').value == "" || document.getElementById('input5').value == "" || document.getElementById('input6').value == "" || document.getElementById('input7').value == "" || document.getElementById('input8').value == "" || document.getElementById('input9').value == "") {
+      alert("Fill all the input box!");
+      return
+    }
+
+    /*
+    if(typeof document.getElementById('input1').value === "string" || typeof document.getElementById('input2').value === "string" || typeof document.getElementById('input3').value === "string" || typeof document.getElementById('input4').value === "string" || typeof document.getElementById('input5').value === "string" || typeof document.getElementById('input6').value === "string" || typeof document.getElementById('input7').value === "string" || typeof document.getElementById('input8').value === "string" || typeof document.getElementById('input9').value === "string") {
+      alert("Only integers and float are allows !");
+      return
+    }
+    */
+
+    var input1 = document.getElementById('input1').value
+    var input2 = document.getElementById('input2').value
+    var input3 = document.getElementById('input3').value
+    var input4 = document.getElementById('input4').value
+    var input5 = document.getElementById('input5').value
+    var input6 = document.getElementById('input6').value
+    var input7 = document.getElementById('input7').value
+    var input8 = document.getElementById('input8').value
+    var input9 = document.getElementById('input9').value
+    
+      d1.insertAdjacentHTML('beforeend', '<tr><th>'+ input1 +'</th><th>'+ input2 +'</th><th>'+ input3 +'</th><th>'+ input4 +'</th><th>'+ input5 + '</th><th>'+ input6 +'</th><th>'+ input7 +'</th><th>'+ input8 +'</th><th>'+ input9 +'</th></tr>');
+
+      document.getElementById('input1').value = ""
+      document.getElementById('input2').value = ""
+      document.getElementById('input3').value = ""
+      document.getElementById('input4').value = ""
+      document.getElementById('input5').value = ""
+      document.getElementById('input6').value = ""
+      document.getElementById('input7').value = ""
+      document.getElementById('input8').value = ""
+      document.getElementById('input9').value = ""
+
+  }
+
+  function toFixed(x) {
+
+    num = parseFloat(x)
+
+    console.log("avant ====" + num)
+
+    if (Math.abs(num) < 1.0) {
+      var e = parseInt(num.toString().split('e-')[1]);
+      if (e) {
+          num *= Math.pow(10,e-1);
+          num = '0.' + (new Array(e)).join('0') + num.toString().substring(2);
+      }
+    } else {
+      var e = parseInt(num.toString().split('+')[1]);
+      if (e > 20) {
+          e -= 20;
+          num /= Math.pow(10,e);
+          num += (new Array(e+1)).join('0');
+      }
+    }
+    return num;
+    console.log("apres ====" + num)
+  }
+
+  function open_dataset(){    
+    console.log(dataset_name)
+    window.document.getElementById("dataset_name").innerText = dataset_name;
+    window.document.getElementById("namer").value = dataset_name;
+
+    var unit = document.getElementById("dataset").innerHTML;
+    //var parts = unit.split(". ").join('').split("array(").join('').split(')').join('|').split("|,");
+    var parts = unit.split(". ").join('').split("array(").join('').split(')').join('').split("],").join('|').split('[').join('')
+    var tab = parts.split('|')
+
+    //console.log(tab[1])
+
+    document.getElementById("dataset").innerHTML = parts
+
+    var results = new Array([]);
+
+    console.log(tab.length)
+
+    
+
+    for (var i = 0; i < tab.length; i++) {
+
+      var value = tab[i].split(",")
+
+      var a = toFixed(value[0])
+      var b = toFixed(value[1])
+      var c = toFixed(value[2])
+      var d = toFixed(value[3])
+      var e = toFixed(value[4])
+      var f = toFixed(value[5])
+      var g = toFixed(value[6])
+      var h = toFixed(value[7])
+      var g = toFixed(value[8].replace('\n', '').replace("]]", ''))
+
+      console.log("Its the day", value[8].replace('\n', '').replace("]]", ''))
+      
+
+      value = {a, b, c, d, e, f, g, h, g}
+      results[i] = value;
+      
+    }
+
+    var n_results = results.reverse()
+
+    var d1 = document.getElementById('dtMaterialDesignExample');
+
+    for(var a = 0; a != results.length; a++) {
+      d1.insertAdjacentHTML('afterbegin', '<tr><th>'+ n_results[a].a +'</th><th>'+ n_results[a].b +'</th><th>'+ n_results[a].c +'</th><th>'+ n_results[a].d +'</th><th>'+ n_results[a].e + '</th><th>'+ n_results[a].f +'</th><th>'+ n_results[a].g +'</th><th>'+ n_results[a].h +'</th><th>'+ n_results[a].g +'</th></tr>');
+  }
+
+    console.log(results[2])
+    d1.insertAdjacentHTML('afterend', '<div class="insert_datas"><tr><th><input placeholder="insert" id="input1"></input></th><th><input placeholder="insert" id="input2"></input></th><th><input placeholder="insert" id="input3"></input></th><th><input placeholder="insert" id="input4"></input></th><th><input placeholder="insert" id="input5"></input></th><th><input placeholder="insert" id="input6"></input></th><th><input placeholder="insert" id="input7"></input></th><th><input placeholder="insert" id="input8"></input></th><th><input placeholder="insert" id="input9"></input></th></tr></div>');
+  }
+
+  function goto_result() {
+    window.document.getElementById("ZOUZOU").click()
+    //location.href = "/result?dataset=" + dataset_name
+  }
+
+</script>
+
+<body  onload="open_dataset()">
+  <div class="info">  
+  <p class="instruction">
+        Your dataset:
+        </p>
+        <h3>{{ value }}<h3>
+        <p id="dataset_name" class="ds_name"></p>
+      </div>
+        <div class="choice">
+          <a  id="btnAttachment" href="/" class="button1">← go back</a>
+          <a action="{{ url_for('result') }}" method="post" onclick="goto_result()" id="btnAttachment" class="button1">continue →</a>
+        </div>
+
+        <form action="{{ url_for('result') }}" method="post">
+          <input type="text" id="namer" name="projectFilepath" style="display:none";>
+          <input type="submit" id="ZOUZOU" style="display:none";>
+        </form>
+
+        <div class="on-load">
+          <div class="spinner"></div>
+        </div>
+
+        <table id="dtMaterialDesignExample" class="table" cellspacing="0" style="width:100%">
+          <thead>
+              <tr>
+                  <th class="th-sm">1</th>
+                  <th class="th-sm">2</th>
+                  <th class="th-sm">3</th>
+                  <th class="th-sm">4</th>
+                  <th class="th-sm">5</th>
+                  <th class="th-sm">6</th>
+                  <th class="th-sm">7</th>
+                  <th class="th-sm">8</th>
+                  <th class="th-sm">9</th>
+              </tr>
+          </thead>
+      </table>
+        <div class="choice2">
+          <a class="button2" onclick="save_line()">save line</a>
+          <a class="button2" onclick="delete_line()">delete line</a>
+          <a class="button2" id="sv_file" onclick="save_file()" disabled>save dataset</a>
+        </div>
+
+        <h3 style="display:none" id="dataset">{{ value2 }}<h3></h3>
+        </div>
+    <div class="show-data" >
+
+    </div>
+    <br>
+</body>
+</html>
+
+<style>
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
+   }
+   
+   h1, h2, h3, h4, h5, h6 {
+    font-weight: 500;
+   }
+
+   input{
+     width: 70px;
+   } 
+   body {
+     height: 100vh;
+     margin: 0;
+     padding: 0;
+     display: block;
+     place-items: center;
+   }
+
+.ds_name{
+  text-align: center;
+}
+
+#clicked{
+    background-color: black;
+}
+
+.instruction{
+    text-align: center;
+    font-size: x-large;
+}
+
+.info{
+  vertical-align: middle;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 20%;
+  position: relative;
+  margin: auto;
+  color: black;
+  border-radius: 25px;
+  background-color:white ;
+}
+
+.button1{
+    border-radius: 10px;
+    padding: 16px 42px;
+    box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
+    line-height: 1.25;
+    background: #FC6E51;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    letter-spacing: .08em;
+    transition: background-color .6s ease;
+    overflow: hidden;
+    margin-right: 420px;
+  
+  }
+  
+  .button1:hover {
+    background-color: #c45742 ;
+    color: white;
+  }
+  
+  .button1:active {
+    background-color:  #994534;
+    color: white;
+    transform: scale(0.98); 
+  }
+
+  .choice {
+    margin-left: 22.5%;
+    text-align: center;
+    line-height: 80px;
+    position:relative;
+  }
+
+  button{
+    border-radius: 10px;
+    padding: 16px 42px;
+    box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
+    line-height: 1.25;
+    background: #FC6E51;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    letter-spacing: .08em;
+    transition: background-color .6s ease;
+    overflow: hidden;
+    margin-right: 420px;
+  
+  }
+  
+  button:hover {
+    background-color: #c45742 ;
+    color: white;
+  }
+  
+  button:active {
+    background-color:  #994534;
+    color: white;
+    transform: scale(0.98); 
+  }
+
+  .option{
+    text-align: center;
+    line-height: 20px;
+    position:relative;
+  }
+
+  .insert_datas{
+    text-align: center;
+    line-height: 20px;
+    position:relative;
+  }
+
+  .choice2 {
+    margin-left: 8.5%;
+    text-align: center;
+    line-height: 80px;
+    position:relative;
+  }
+    .button2{
+      border-radius: 10px;
+      padding: 16px 42px;
+      box-shadow: 0px 0px 12px -2px rgba(0,0,0,0.5);
+      line-height: 1.25;
+      background: #FC6E51;
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      letter-spacing: .08em;
+      transition: background-color .6s ease;
+      overflow: hidden;
+      margin-right: 120px;
+    
+    }
+    
+    .button2:hover {
+      background-color: #c45742 ;
+      color: white;
+    }
+    
+    .button2:active {
+      background-color:  #994534;
+      color: white;
+      transform: scale(0.98); 
+    }
+
+</style>
